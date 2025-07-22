@@ -33,22 +33,25 @@
       padding: 20px;
     }
 
-    /* Fondo de flores con IA más detallado y opaco */
+    /* Fondo de flores difuminado y sutil */
     body::before {
       content: "";
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: url('https://image.pollinations.ai/prompt/detailed%20watercolor%20floral%20pattern%20light%20pastel%20colors%20seamless%20high%20resolution?width=1920&height=1080&seed=1234') repeat; /* Imagen de mayor resolución y más detalle */
-      opacity: 0.15; /* Más opaco para ser más visible */
+      /* Usamos una imagen generada con un patrón floral suave y colores pastel */
+      background: url('https://image.pollinations.ai/prompt/delicate%20pastel%20watercolor%20floral%20pattern%20light%20diffused%20seamless%20high%20resolution?width=1920&height=1080&seed=5678') repeat;
+      background-size: 800px; /* Ajusta el tamaño para que sea un patrón más grande y difuso */
+      opacity: 0.1; /* Muy sutil, casi un velo */
       z-index: -1;
-      animation: floatBackground 60s linear infinite; /* Animación más lenta para no distraer */
+      animation: floatBackground 90s linear infinite; /* Animación muy lenta para que no distraiga */
       pointer-events: none;
     }
 
+    /* Animación del fondo */
     @keyframes floatBackground {
       0% { background-position: 0 0; }
-      100% { background-position: 2000px 2000px; } /* Movimiento más amplio */
+      100% { background-position: 1000px 1000px; } /* Movimiento gradual */
     }
 
     /* Estilos del Preloader (Flor Girando) */
@@ -74,7 +77,7 @@
     .loading-flower {
       width: 100px; /* Tamaño de la flor */
       height: 100px;
-      background: url('flor_logo.png') center center / contain no-repeat; /* Usando el logo local */
+      background: url('flor_logo.jpg') center center / contain no-repeat; /* Usando el logo local */
       animation: spin 2s linear infinite; /* Animación de giro continuo */
     }
 
@@ -86,7 +89,7 @@
     header {
       background: var(--white);
       text-align: center;
-      padding: 1.5rem 2rem; /* Reduje un poco el padding vertical */
+      padding: 1.5rem 2rem;
       font-family: 'Playfair Display', serif;
       color: var(--primary-color);
       border-bottom: 5px solid var(--secondary-color);
@@ -97,10 +100,10 @@
       box-shadow: 0 8px 25px var(--shadow-medium);
       overflow: hidden;
       margin-bottom: 20px;
-      display: flex; /* Para alinear el logo y el subtítulo */
+      display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center; /* Centrar verticalmente también */
+      justify-content: center;
     }
 
     header h1 {
@@ -108,9 +111,9 @@
     }
 
     header .logo-container {
-      width: 150px; /* Ajusta el tamaño del logo según necesites */
+      width: 150px;
       height: auto;
-      margin-bottom: 10px; /* Espacio entre el logo y el subtítulo */
+      margin-bottom: 10px;
     }
 
     header .logo-container img {
@@ -124,26 +127,10 @@
       font-weight: 300;
       font-size: 1.1rem;
       color: var(--text-color);
-      margin-top: 0; /* Ajustar el margen superior */
+      margin-top: 0;
     }
 
-    /* Decoraciones superiores (imágenes de error) */
-    header .decoracion {
-      position: absolute;
-      height: 80px; /* Ajusta la altura de las decoraciones */
-      opacity: 0.7;
-      z-index: 1; /* Asegura que estén por encima del fondo del header */
-    }
-
-    header .decoracion.top-left {
-      top: -10px;
-      left: 10px;
-    }
-
-    header .decoracion.top-right {
-      top: -10px;
-      right: 10px;
-    }
+    /* --- Las decoraciones top-left y top-right han sido ELIMINADAS --- */
 
     .container {
       width: 100%;
@@ -174,7 +161,7 @@
       font-size: 1.05rem;
     }
 
-    input[type="text"], textarea, select { /* Restablecido el selector para incluir solo los tipos necesarios */
+    input[type="text"], textarea, select {
       width: 100%;
       padding: 14px 18px;
       border-radius: 10px;
@@ -212,7 +199,7 @@
       font-size: 1rem;
     }
 
-    .item input[type="number"] { /* Específico para los inputs de cantidad */
+    .item input[type="number"] {
       width: 80px;
       text-align: center;
       padding: 8px 10px;
@@ -293,17 +280,6 @@
         padding: 1rem;
         font-size: 0.85rem;
       }
-      header .decoracion {
-        height: 60px;
-      }
-      header .decoracion.top-left {
-        left: 5px;
-        top: -5px;
-      }
-      header .decoracion.top-right {
-        right: 5px;
-        top: -5px;
-      }
       .loading-flower {
         width: 70px;
         height: 70px;
@@ -319,12 +295,10 @@
 
   <header>
     <div class="logo-container">
-      <img src="flor_logo.png" alt="Logo Escor.line">
+      <img src="flor_logo.jpg" alt="Logo Escor.line">
     </div>
     <p>Estudio escolar futurista: pedidos rápidos y completos 🚀</p>
-    <img class="decoracion top-left" src="URL_DE_LA_IMAGEN_DE_ERROR_1" alt="Decoración superior izquierda">
-    <img class="decoracion top-right" src="URL_DE_LA_IMAGEN_DE_ERROR_2" alt="Decoración superior derecha">
-  </header>
+    </header>
 
   <div class="container">
     <div class="field">
@@ -382,7 +356,7 @@
     function verResumen() {
       let resumen = '📋 Pedido Escor.line\n';
       let total = 0;
-      productos.forEach((p, i) => { // Corregido el nombre de la variable 'products' a 'productos'
+      productos.forEach((p, i) => {
         const cantidad = parseInt(document.getElementById(`cant-${i}`).value);
         if (cantidad > 0) {
           resumen += `- ${p.nombre}: ${cantidad} x $${p.precio} = $${cantidad * p.precio}\n`;
