@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escor.line</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #6a1b9a; /* Morado Oscuro */
+      --secondary-color: #f48fb1; /* Rosa Vibrante */
+      --accent-color: #ec407a; /* Rosa Intenso */
+      --light-bg: #fdf6fa; /* Fondo muy claro */
+      --white: #ffffff;
+      --text-color: #333;
+      --border-color: #e0e0e0;
+      --shadow-light: rgba(0,0,0,0.05);
+      --shadow-medium: rgba(0,0,0,0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%); /* Degradado suave */
+      overflow-x: hidden;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Fondo de flores con IA más detallado y opaco */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://image.pollinations.ai/prompt/detailed%20watercolor%20floral%20pattern%20light%20pastel%20colors%20seamless%20high%20resolution?width=1920&height=1080&seed=1234') repeat; /* Imagen de mayor resolución y más detalle */
+      opacity: 0.15; /* Más opaco para ser más visible */
+      z-index: -1;
+      animation: floatBackground 60s linear infinite; /* Animación más lenta para no distraer */
+      pointer-events: none;
+    }
+
+    @keyframes floatBackground {
+      0% { background-position: 0 0; }
+      100% { background-position: 2000px 2000px; } /* Movimiento más amplio */
+    }
+
+    /* Estilos del Preloader (Flor Girando) */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.95); /* Fondo semitransparente */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999; /* Asegura que esté por encima de todo */
+      transition: opacity 0.5s ease-out;
+    }
+
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loading-flower {
+      width: 100px; /* Tamaño de la flor */
+      height: 100px;
+      background: url('flor_logo.jpg') center center / contain no-repeat; /* Usando el logo local */
+      animation: spin 2s linear infinite; /* Animación de giro continuo */
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    header {
+      background: var(--white);
+      text-align: center;
+      padding: 1.5rem 2rem; /* Reduje un poco el padding vertical */
+      font-family: 'Playfair Display', serif;
+      color: var(--primary-color);
+      border-bottom: 5px solid var(--secondary-color);
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 8px 25px var(--shadow-medium);
+      overflow: hidden;
+      margin-bottom: 20px;
+      display: flex; /* Para alinear el logo y el subtítulo */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; /* Centrar verticalmente también */
+    }
+
+    header h1 {
+      display: none; /* Ocultar el texto del título */
+    }
+
+    header .logo-container {
+      width: 150px; /* Ajusta el tamaño del logo según necesites */
+      height: auto;
+      margin-bottom: 10px; /* Espacio entre el logo y el subtítulo */
+    }
+
+    header .logo-container img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    header p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      color: var(--text-color);
+      margin-top: 0; /* Ajustar el margen superior */
+    }
+
+    /* Decoraciones superiores (imágenes de error) */
+    header .decoracion {
+      position: absolute;
+      height: 80px; /* Ajusta la altura de las decoraciones */
+      opacity: 0.7;
+      z-index: 1; /* Asegura que estén por encima del fondo del header */
+    }
+
+    header .decoracion.top-left {
+      top: -10px;
+      left: 10px;
+    }
+
+    header .decoracion.top-right {
+      top: -10px;
+      right: 10px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 40px var(--shadow-medium);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .field {
+      padding: 1rem;
+      background: var(--light-bg);
+      border-radius: 15px;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 1px 3px var(--shadow-light);
+    }
+
+    .field label {
+      font-weight: 600;
+      color: var(--primary-color);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 0;
+      background: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      color: var(--text-color);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 1px 3px var(--shadow-light);
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(244, 143, 177, 0.3);
+      outline: none;
+    }
+
+    .item {
+      background: var(--white);
+      border-left: 5px solid var(--secondary-color);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 0;
+      box-shadow: 0 3px 12px var(--shadow-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item label {
+      font-weight: 500;
+      color: var(--primary-color);
+      font-size: 1rem;
+    }
+
+    .item input[type="number"] {
+      width: 80px;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 1px 3px var(--shadow-light);
+    }
+
+    .send-btn {
+      width: 100%;
+      padding: 1.2rem;
+      font-size: 1.2rem;
+      background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+      color: var(--white);
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 1rem;
+      box-shadow: 0 5px 15px var(--shadow-medium);
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .send-btn:hover {
+      background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--shadow-medium);
+    }
+
+    #resumen {
+      background: var(--light-bg);
+      border: 1px dashed var(--secondary-color);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 15px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      white-space: pre-wrap;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      box-shadow: inset 0 2px 5px var(--shadow-light);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      header {
+        padding: 1rem 1rem;
+        border-radius: 15px 15px 0 0;
+      }
+      header .logo-container {
+        width: 120px;
+        margin-bottom: 5px;
+      }
+      header p {
+        font-size: 0.9rem;
+      }
+      .container {
+        padding: 1.5rem;
+        border-radius: 0 0 15px 15px;
+        gap: 1rem;
+      }
+      .field, .item {
+        padding: 0.8rem 1rem;
+      }
+      input[type="text"], textarea, select {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+      .send-btn {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+      #resumen {
+        padding: 1rem;
+        font-size: 0.85rem;
+      }
+      header .decoracion {
+        height: 60px;
+      }
+      header .decoracion.top-left {
+        left: 5px;
+        top: -5px;
+      }
+      header .decoracion.top-right {
+        right: 5px;
+        top: -5px;
+      }
+      .loading-flower {
+        width: 70px;
+        height: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <div class="loading-flower"></div>
+  </div>
+
+  <header>
+    <div class="logo-container">
+      <img src="flor_logo.jpg" alt="Logo Escor.line">
+    </div>
+    <p>Estudio escolar futurista: pedidos rápidos y completos 🚀</p>
+    <img class="decoracion top-left" src="decoracion_1.jfif" alt="Decoración superior izquierda">
+    <img class="decoracion top-right" src="decoracion_2.jfif" alt="Decoración superior derecha">
+  </header>
+
+  <div class="container">
+    <div class="field">
+      <label for="nombre">👤 Tu nombre o curso:</label>
+      <input type="text" id="nombre" placeholder="Ej: 9B - Camila Ríos">
+    </div>
+
+    <div id="productos"></div>
+
+    <div class="field">
+      <label for="servicio">🛠 Trabajo o tarea (materia, tipo y detalles):</label>
+      <textarea id="servicio" rows="3" placeholder="Ej: Laboratorio de Biología, resumen con ilustraciones..."></textarea>
+    </div>
+
+    <div class="field">
+      <label for="bata">👕 Renta de batas (tiempo y uso):</label>
+      <textarea id="bata" rows="2" placeholder="Ej: Para laboratorio, 2 horas"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="ayuda">📣 ¿En qué podemos ayudarte?</label>
+      <textarea id="ayuda" rows="2" placeholder="Ej: Necesito algo que no está listado..."></textarea>
+    </div>
+
+    <button class="send-btn" onclick="verResumen()">📝 Ver resumen</button>
+    <div id="resumen"></div>
+    <button class="send-btn" onclick="enviarPedido()">📧 Enviar por correo</button>
+  </div>
+
+  <script>
+    const productos = [
+      { nombre: "Lápices", precio: 700 },
+      { nombre: "Bolígrafos", precio: 900 },
+      { nombre: "Cuadernos", precio: 2500 },
+      { nombre: "Carpetas", precio: 1800 },
+      { nombre: "Libretas", precio: 2200 },
+      { nombre: "Marcadores", precio: 1200 },
+      { nombre: "Gomas de borrar", precio: 500 },
+      { nombre: "Sacapuntas", precio: 600 },
+      { nombre: "Reglas", precio: 1000 }
+    ];
+
+    const contenedor = document.getElementById("productos");
+
+    productos.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <label>📦 ${p.nombre} ($${p.precio})</label>
+        <input type="number" id="cant-${i}" min="0" value="0">
+      `;
+      contenedor.appendChild(div);
+    });
+
+    function verResumen() {
+      let resumen = '📋 Pedido Escor.line\n';
+      let total = 0;
+      productos.forEach((p, i) => {
+        const cantidad = parseInt(document.getElementById(`cant-${i}`).value);
+        if (cantidad > 0) {
+          resumen += `- ${p.nombre}: ${cantidad} x $${p.precio} = $${cantidad * p.precio}\n`;
+          total += cantidad * p.precio;
+        }
+      });
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const servicio = document.getElementById("servicio").value.trim();
+      const bata = document.getElementById("bata").value.trim();
+      const ayuda = document.getElementById("ayuda").value.trim();
+
+      if (nombre) resumen += `\n👤 Nombre/Curso: ${nombre}`;
+      if (servicio) resumen += `\n📘 Trabajo: ${servicio}`;
+      if (bata) resumen += `\n👕 Renta de batas: ${bata}`;
+      if (ayuda) resumen += `\n📣 Ayuda adicional: ${ayuda}`;
+
+      resumen += `\n\n💰 Total estimado: $${total}`;
+
+      document.getElementById("resumen").innerText = resumen;
+    }
+
+    function enviarPedido() {
+      const resumen = document.getElementById("resumen").innerText;
+      if (!resumen || resumen.includes("$0")) {
+        alert("¡Oops! Parece que tu pedido está vacío. Por favor, selecciona productos o llena los campos antes de enviar.");
+        return;
+      }
+      const asunto = encodeURIComponent("Pedido desde Escor.line");
+      const cuerpo = encodeURIComponent(resumen);
+      window.location.href = `mailto:oscardhf0703@gmail.com?subject=${asunto}&body=${cuerpo}`;
+    }
+
+    // Lógica para el preloader
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      setTimeout(() => {
+        preloader.classList.add('hidden');
+        document.body.style.overflow = ''; // Permite el scroll una vez que el preloader se oculta
+      }, 5000); // 5 segundos
+      document.body.style.overflow = 'hidden'; // Evita el scroll mientras el preloader está activo
+    });
+  </script>
+</body>
+</html>
