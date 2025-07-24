@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escor.line - Tu Pedido Escolar Futurista</title> <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #6a1b9a; /* Morado Oscuro */
+      --secondary-color: #f48fb1; /* Rosa Vibrante */
+      --accent-color: #ec407a; /* Rosa Intenso */
+      --light-bg: #fdf6fa; /* Fondo muy claro */
+      --white: #ffffff;
+      --text-color: #333;
+      --border-color: #e0e0e0;
+      --shadow-light: rgba(0,0,0,0.05);
+      --shadow-medium: rgba(0,0,0,0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%); /* Degradado suave */
+      overflow-x: hidden;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Fondo de flores con IA más detallado y opaco */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://image.pollinations.ai/prompt/detailed%20watercolor%20floral%20pattern%20light%20pastel%20colors%20seamless%20high%20resolution?width=1920&height=1080&seed=1234') repeat; /* Imagen de mayor resolución y más detalle */
+      opacity: 0.15; /* Más opaco para ser más visible */
+      z-index: -1;
+      animation: floatBackground 60s linear infinite; /* Animación más lenta para no distraer */
+      pointer-events: none;
+    }
+
+    @keyframes floatBackground {
+      0% { background-position: 0 0; }
+      100% { background-position: 2000px 2000px; } /* Movimiento más amplio */
+    }
+
+    /* Estilos del Preloader (Flor Girando) */
+    #preloader, #modalPoliticasLoader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.95); /* Fondo semitransparente */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999; /* Asegura que esté por encima de todo */
+      transition: opacity 0.5s ease-out;
+    }
+
+    #preloader.hidden, #modalPoliticasLoader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loading-flower {
+      width: 100px; /* Tamaño de la flor */
+      height: 100px;
+      background: url('flor_logo.jpg') center center / contain no-repeat; /* Usando el logo local */
+      animation: spin 2s linear infinite; /* Animación de giro continuo */
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Animación de apertura de flor */
+    .opening-flower {
+      width: 100px;
+      height: 100px;
+      background: url('flor_logo.jpg') center center / contain no-repeat;
+      animation: openFlower 1.5s ease-out forwards; /* Animación de apertura */
+      transform-origin: center center;
+    }
+
+    @keyframes openFlower {
+      0% { transform: scale(0) rotate(0deg); opacity: 0; }
+      50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+      100% { transform: scale(1) rotate(360deg); opacity: 1; }
+    }
+
+    header {
+      background: var(--white);
+      text-align: center;
+      padding: 1.5rem 2rem; /* Reduje un poco el padding vertical */
+      font-family: 'Playfair Display', serif;
+      color: var(--primary-color);
+      border-bottom: 5px solid var(--secondary-color);
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 8px 25px var(--shadow-medium);
+      overflow: hidden;
+      margin-bottom: 20px;
+      display: flex; /* Para alinear el logo y el subtítulo */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; /* Centrar verticalmente también */
+    }
+
+    header h1 {
+      /* Estilos para el título principal */
+      display: block; /* Asegura que sea visible */
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem; /* Tamaño grande */
+      color: var(--primary-color);
+      margin: 10px 0; /* Espaciado */
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
+      letter-spacing: 2px; /* Espaciado entre letras */
+      line-height: 1; /* Eliminar espacio extra */
+    }
+
+    header p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      color: var(--text-color);
+      margin-top: 0; /* Ajustar el margen superior */
+    }
+
+    /* Decoraciones superiores */
+    header .decoracion {
+      position: absolute;
+      height: 80px; /* Ajusta la altura de las decoraciones */
+      opacity: 0.7;
+      z-index: 1; /* Asegura que estén por encima del fondo del header */
+    }
+
+    header .decoracion.top-left {
+      top: -10px;
+      left: 10px;
+    }
+
+    header .decoracion.top-right {
+      top: -10px;
+      right: 10px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 40px var(--shadow-medium);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .field {
+      padding: 1rem;
+      background: var(--light-bg);
+      border-radius: 15px;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 1px 3px var(--shadow-light);
+    }
+
+    .field label {
+      font-weight: 600;
+      color: var(--primary-color);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    input[type="text"], textarea, select, input[type="number"] {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 0;
+      background: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      color: var(--text-color);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 1px 3px var(--shadow-light);
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus, input[type="number"]:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(244, 143, 177, 0.3);
+      outline: none;
+    }
+
+    .item {
+      background: var(--white);
+      border-left: 5px solid var(--secondary-color);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 0;
+      box-shadow: 0 3px 12px var(--shadow-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item.promo {
+      border-left: 5px solid red; /* Borde rojo para la promoción */
+    }
+
+    .item label {
+      font-weight: 500;
+      color: var(--primary-color);
+      font-size: 1rem;
+    }
+
+    .item input[type="number"] {
+      width: 80px;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 1px 3px var(--shadow-light);
+    }
+
+    .send-btn {
+      width: 100%;
+      padding: 1.2rem;
+      font-size: 1.2rem;
+      background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+      color: var(--white);
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 1rem;
+      box-shadow: 0 5px 15px var(--shadow-medium);
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .send-btn:hover {
+      background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--shadow-medium);
+    }
+
+    #resumen {
+      background: var(--light-bg);
+      border: 1px dashed var(--secondary-color);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 15px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      white-space: pre-wrap;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      box-shadow: inset 0 2px 5px var(--shadow-light);
+    }
+
+    #total-dinamico {
+        text-align: right;
+        font-weight: 700;
+        margin-top: 10px;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    /* Estilos del Modal (ventana emergente) */
+    .modal {
+      display: none; /* Oculto por defecto */
+      position: fixed; /* Posición fija para cubrir toda la pantalla */
+      z-index: 10000; /* Z-index alto para estar por encima de todo */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; /* Habilitar scroll si el contenido es muy largo */
+      background-color: rgba(0,0,0,0.5); /* Fondo semitransparente oscuro */
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: var(--white);
+      margin: auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 600px;
+      position: relative; /* Para el botón de cerrar */
+      animation: fadeInScale 0.3s ease-out;
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .close-button {
+      color: var(--text-color);
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    .modal-content h2 {
+      color: var(--primary-color);
+      font-family: 'Playfair Display', serif;
+      margin-top: 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .modal-options button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 10px;
+      background: var(--secondary-color);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .modal-options button:hover {
+      background: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    .modal-work-details {
+        display: none; /* Oculto por defecto */
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .modal-work-details label {
+        font-weight: 600;
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 8px;
+        margin-top: 15px;
+    }
+
+    .modal-work-details input[type="number"],
+    .modal-work-details textarea {
+        margin-bottom: 15px;
+    }
+
+    .modal-work-details .confirm-btn {
+        background: var(--primary-color);
+        margin-top: 20px;
+    }
+    .modal-work-details .confirm-btn:hover {
+        background: #5a158a;
+    }
+
+    /* Estilos específicos del modal de políticas */
+    #modalPoliticas .modal-content h2 {
+        color: #d32f2f; /* Rojo más fuerte para la advertencia */
+        font-size: 1.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    #modalPoliticas .modal-content p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-color);
+        text-align: left;
+        margin-bottom: 15px;
+    }
+    #modalPoliticas .modal-content p strong {
+        color: var(--primary-color);
+    }
+    #modalPoliticas .modal-content ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+    #modalPoliticas .modal-content ul li {
+        margin-bottom: 10px;
+        color: #c62828; /* Rojo más oscuro para las advertencias */
+        font-weight: 600;
+    }
+    #modalPoliticas .modal-content ul li::before {
+        content: '• ';
+        color: #d32f2f;
+        font-weight: bold;
+        display: inline-block;
+        width: 1em;
+        margin-left: -1em;
+    }
+    #modalPoliticas .modal-content .final-statement {
+        margin-top: 25px;
+        font-style: italic;
+        color: #555;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      header {
+        padding: 1rem 1rem;
+        border-radius: 15px 15px 0 0;
+      }
+      header h1 {
+        font-size: 2.5rem; /* Ajuste para pantallas pequeñas */
+      }
+      header p {
+        font-size: 0.9rem;
+      }
+      .container {
+        padding: 1.5rem;
+        border-radius: 0 0 15px 15px;
+        gap: 1rem;
+      }
+      .field, .item {
+        padding: 0.8rem 1rem;
+      }
+      input[type="text"], textarea, select, input[type="number"] {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+      .send-btn {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+      #resumen {
+        padding: 1rem;
+        font-size: 0.85rem;
+      }
+      header .decoracion {
+        height: 60px;
+      }
+      header .decoracion.top-left {
+        left: 5px;
+        top: -5px;
+      }
+      header .decoracion.top-right {
+        right: 5px;
+        top: -5px;
+      }
+      .loading-flower {
+        width: 70px;
+        height: 70px;
+      }
+      .opening-flower {
+        width: 70px;
+        height: 70px;
+      }
+      .modal-content {
+        padding: 20px;
+      }
+      .close-button {
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <div class="loading-flower"></div>
+  </div>
+
+  <header>
+    <h1>ESCOR.LINE</h1> <p>Estudio escolar futurista: pedidos rápidos y completos 🚀</p>
+    <img class="decoracion top-left" src="decoracion_1.jfif" alt="Decoración floral abstracta izquierda">
+    <img class="decoracion top-right" src="decoracion_2.jfif" alt="Decoración floral abstracta derecha">
+  </header>
+
+  <div class="container">
+    <div class="field">
+      <label for="nombre">👤 Tu nombre o curso:</label>
+      <input type="text" id="nombre" placeholder="Ej: 9B - Camila Ríos">
+    </div>
+
+    <div id="productos"></div>
+    <div id="total-dinamico">Total: $0</div>
+
+    <div class="field">
+      <label for="bataHoras">👕 Renta de batas (horas):</label>
+      <input type="number" id="bataHoras" min="0" value="0" placeholder="Ej: 2 horas">
+      <p style="font-size: 0.9em; color: gray; margin-top: 5px;">Costo por hora: $1500 pesos</p>
+    </div>
+
+    <div class="field">
+      <label for="calculadoraHoras">🧮 Renta de calculadoras (horas):</label>
+      <input type="number" id="calculadoraHoras" min="0" value="0" placeholder="Ej: 3 horas">
+      <p style="font-size: 0.9em; color: gray; margin-top: 5px;">Costo por hora: $2000 pesos</p>
+    </div>
+
+    <div class="field">
+      <label for="trabajoSeleccionado">🛠 Trabajo o tarea:</label>
+      <input type="text" id="trabajoSeleccionado" placeholder="Haz clic para seleccionar tu trabajo" readonly>
+      <button class="send-btn" id="abrirModalTrabajo" style="margin-top: 10px;">Seleccionar Trabajo</button>
+    </div>
+
+    <div class="field">
+      <label for="ayuda">📣 ¿En qué podemos ayudarte?</label>
+      <textarea id="ayuda" rows="2" placeholder="Ej: Necesito algo que no está listado..."></textarea>
+    </div>
+
+    <button class="send-btn" id="verResumenBtn">📝 Ver resumen</button>
+    <div id="resumen"></div>
+    <button class="send-btn" id="enviarPedidoBtn" style="display: none;">📧 Enviar por correo</button>
+    <p id="mensaje-envio" style="text-align: center; color: var(--primary-color); margin-top: 10px; font-size: 0.9rem; display: none;">¡Preparando tu pedido! Por favor, revisa tu cliente de correo para enviar.</p>
+
+    <button class="send-btn" id="abrirModalPoliticas">POLÍTICAS DE LA PÁGINA</button>
+  </div>
+
+  <div id="modalTrabajo" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Selecciona el Tipo de Trabajo</h2>
+      <div class="modal-options">
+        <button id="btnWord">Word</button>
+        <button id="btnPowerPoint">PowerPoint</button>
+        <button id="btnArtesanal">Artesanal</button>
+      </div>
+
+      <div id="workDetails" class="modal-work-details">
+        <div id="wordOptions" style="display: none;">
+          <label for="wordPages">Cantidad de Páginas:</label>
+          <input type="number" id="wordPages" min="1" value="1">
+          <p style="font-size: 0.9em; color: gray;">Base: $10000 (hasta 7 páginas). Página extra: $500</p>
+        </div>
+        <div id="powerPointOptions" style="display: none;">
+          <label for="powerPointSlides">Cantidad de Diapositivas:</label>
+          <input type="number" id="powerPointSlides" min="1" value="7">
+          <p style="font-size: 0.9em; color: gray;">Base: $10000 (hasta 7 diapositivas). Diapositiva extra: $500</p>
+        </div>
+        <div id="artesanalOptions" style="display: none;">
+          <label for="artesanalDetails">Describe tu trabajo artesanal:</label>
+          <textarea id="artesanalDetails" rows="4" placeholder="Ej: Maqueta del sistema solar con materiales reciclados..."></textarea>
+          <label for="artesanalPrice">Precio Ofrecido (opcional):</label>
+          <input type="number" id="artesanalPrice" min="0" value="0" placeholder="Ej: 50000">
+          <p style="font-size: 0.9em; color: gray;">Ingresa el precio que estás dispuesto a pagar. El precio final se acordará.</p>
+        </div>
+        <button class="send-btn confirm-btn" id="confirmarTrabajo">Confirmar Trabajo</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalPoliticas" class="modal">
+    <div id="modalPoliticasLoader" class="hidden">
+        <div class="opening-flower"></div>
+    </div>
+    <div class="modal-content">
+      <span class="close-button" id="closePoliticasModal">&times;</span>
+      <h2>🚫 ADVERTENCIA SERIA – LÉELA ANTES DE CONTINUAR 🚫</h2>
+      <p>Esta página ha sido creada con un propósito claro: facilitar la compra de útiles escolares de forma organizada y eficiente.</p>
+      <p><strong>NO es un juego. NO es para hacer bromas.</strong></p>
+      <p>Cualquier intento de uso indebido del sistema (como hacer pedidos falsos, enviar formularios por diversión o molestar) tendrá consecuencias inmediatas y definitivas:</p>
+      <ul>
+        <li>❗ Tu cuenta será bloqueada permanentemente.</li>
+        <li>🛑 Tu correo electrónico será rastreado y bloqueado del sistema.</li>
+        <li>⛔ No se te atenderá en ninguna compra futura, sin excepciones.</li>
+        <li>📌 Dependiendo del caso, se notificará a la institución correspondiente o a tu acudiente.</li>
+      </ul>
+      <p>No hay segundas oportunidades.</p>
+      <p>Aquí no venimos a perder el tiempo. Esta plataforma es para quienes realmente necesitan hacer un pedido.</p>
+      <p class="final-statement">Si no lo vas a tomar en serio, ni te molestes en continuar.</p>
+    </div>
+  </div>
+
+
+  <script>
+    const productos = [
+      { nombre: "Lápices", precio: 700 },
+      { nombre: "Bolígrafos", precio: 900 },
+      { nombre: "Cuadernos", precio: 2500 },
+      { nombre: "Carpetas", precio: 1800 },
+      { nombre: "Libretas", precio: 2200 },
+      { nombre: "Marcadores", precio: 1200 },
+      { nombre: "Gomas de borrar", precio: 500 },
+      { nombre: "Sacapuntas", precio: 600 },
+      { nombre: "Reglas", precio: 1000 },
+      { nombre: "Biblia (Promoción)", precio: 2000, promo: true }, // Biblia en promoción
+      { nombre: "Administrar renta de producto", precio: 0 } // Opción para no comprar nada
+    ];
+
+    const contenedorProductos = document.getElementById("productos");
+    const totalDinamicoDiv = document.getElementById("total-dinamico");
+    const resumenDiv = document.getElementById("resumen");
+    const verResumenBtn = document.getElementById("verResumenBtn");
+    const enviarPedidoBtn = document.getElementById("enviarPedidoBtn");
+    const mensajeEnvio = document.getElementById("mensaje-envio");
+
+    // Elementos del Modal de Trabajo
+    const modalTrabajo = document.getElementById("modalTrabajo");
+    const abrirModalTrabajoBtn = document.getElementById("abrirModalTrabajo");
+    const closeButtonTrabajo = modalTrabajo.querySelector(".close-button");
+    const btnWord = document.getElementById("btnWord");
+    const btnPowerPoint = document.getElementById("btnPowerPoint");
+    const btnArtesanal = document.getElementById("btnArtesanal");
+    const workDetails = document.getElementById("workDetails");
+    const wordOptions = document.getElementById("wordOptions");
+    const powerPointOptions = document.getElementById("powerPointOptions");
+    const artesanalOptions = document.getElementById("artesanalOptions");
+    const confirmarTrabajoBtn = document.getElementById("confirmarTrabajo");
+    const trabajoSeleccionadoInput = document.getElementById("trabajoSeleccionado");
+
+    // Elementos del Modal de Políticas
+    const modalPoliticas = document.getElementById("modalPoliticas");
+    const abrirModalPoliticasBtn = document.getElementById("abrirModalPoliticas");
+    const closePoliticasModalBtn = document.getElementById("closePoliticasModal");
+    const modalPoliticasLoader = document.getElementById("modalPoliticasLoader");
+
+
+    let trabajoActual = { tipo: "", detalles: "", precio: 0 };
+    const PRECIO_BATA_HORA = 1500;
+    const PRECIO_CALCULADORA_HORA = 2000; // Nuevo precio para calculadoras
+
+    // Nuevos precios para Word y PowerPoint
+    const PRECIO_WORD_BASE = 10000; // Hasta 7 páginas
+    const PRECIO_WORD_BASE_PAGES = 7; // Modificado a 7
+    const PRECIO_WORD_EXTRA_PAGINA = 500;
+
+    const PRECIO_PPT_BASE = 10000; // Hasta 7 diapositivas
+    const PRECIO_PPT_BASE_SLIDES = 7; // Modificado a 7
+    const PRECIO_PPT_EXTRA_DIAPOSITIVA = 500;
+
+
+    // Función para calcular y mostrar el total dinámicamente
+    function calcularTotalDinamico() {
+      let total = 0;
+      productos.forEach((p, i) => {
+        const cantidadInput = document.getElementById(`cant-${i}`);
+        if (cantidadInput) {
+            const cantidad = parseInt(cantidadInput.value) || 0;
+            total += cantidad * p.precio;
+        }
+      });
+
+      // Sumar costo de la bata
+      const horasBata = parseInt(document.getElementById("bataHoras").value) || 0;
+      total += horasBata * PRECIO_BATA_HORA;
+
+      // Sumar costo de la calculadora
+      const horasCalculadora = parseInt(document.getElementById("calculadoraHoras").value) || 0;
+      total += horasCalculadora * PRECIO_CALCULADORA_HORA;
+
+      // Sumar costo del trabajo seleccionado
+      total += trabajoActual.precio;
+
+      totalDinamicoDiv.innerText = `Total: $${total}`;
+      return total; // Devolvemos el total para usarlo en el resumen
+    }
+
+    // Renderizar productos y añadir escuchadores de eventos
+    productos.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'item' + (p.promo ? ' promo' : ''); // Añadir clase 'promo' si es promoción
+      div.innerHTML = `
+        <label>📦 ${p.nombre} ($${p.precio})</label>
+        <input type="number" id="cant-${i}" min="0" value="0">
+      `;
+      contenedorProductos.appendChild(div);
+
+      // Añadir escuchador de eventos para actualizar el total dinámico
+      div.querySelector(`#cant-${i}`).addEventListener('input', calcularTotalDinamico);
+    });
+
+    // Escuchador de eventos para la renta de batas y calculadoras
+    document.getElementById("bataHoras").addEventListener('input', calcularTotalDinamico);
+    document.getElementById("calculadoraHoras").addEventListener('input', calcularTotalDinamico);
+
+
+    function generarResumen() {
+      let resumenTexto = '📋 Pedido Escor.line\n';
+      let total = 0;
+      let productosSeleccionados = false; // Bandera para saber si hay productos
+
+      productos.forEach((p, i) => {
+        const cantidad = parseInt(document.getElementById(`cant-${i}`).value) || 0;
+        if (cantidad > 0) {
+          resumenTexto += `- ${p.nombre}: ${cantidad} x $${p.precio} = $${cantidad * p.precio}\n`;
+          total += cantidad * p.precio;
+          productosSeleccionados = true;
+        }
+      });
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const horasBata = parseInt(document.getElementById("bataHoras").value) || 0;
+      const horasCalculadora = parseInt(document.getElementById("calculadoraHoras").value) || 0;
+
+      if (nombre) resumenTexto += `\n👤 Nombre/Curso: ${nombre}`;
+
+      if (trabajoActual.tipo) {
+        resumenTexto += `\n📘 Trabajo: ${trabajoActual.tipo}`;
+        if (trabajoActual.detalles) resumenTexto += ` (${trabajoActual.detalles})`;
+        if (trabajoActual.tipo === "Artesanal" && trabajoActual.precio > 0) {
+            resumenTexto += ` - Precio Ofrecido: $${trabajoActual.precio}`;
+        } else if (trabajoActual.precio > 0) {
+            resumenTexto += ` - $${trabajoActual.precio}`;
+        } else if (trabajoActual.tipo === "Artesanal") {
+            resumenTexto += ` (Precio a acordar)`;
+        }
+        total += trabajoActual.precio;
+      }
+
+
+      if (horasBata > 0) {
+        const costoBata = horasBata * PRECIO_BATA_HORA;
+        resumenTexto += `\n👕 Renta de batas: ${horasBata} horas = $${costoBata}`;
+        total += costoBata;
+      }
+
+      if (horasCalculadora > 0) {
+        const costoCalculadora = horasCalculadora * PRECIO_CALCULADORA_HORA;
+        resumenTexto += `\n🧮 Renta de calculadoras: ${horasCalculadora} horas = $${costoCalculadora}`;
+        total += costoCalculadora;
+      }
+
+
+      const ayuda = document.getElementById("ayuda").value.trim();
+      if (ayuda) resumenTexto += `\n📣 Ayuda adicional: ${ayuda}`;
+
+      resumenTexto += `\n\n💰 Total estimado: $${total}`;
+
+      resumenDiv.innerText = resumenTexto;
+
+      // Mostrar el botón de enviar si se ha generado un resumen válido
+      if (nombre || horasBata > 0 || horasCalculadora > 0 || ayuda || productosSeleccionados || trabajoActual.tipo) {
+        enviarPedidoBtn.style.display = 'block';
+      } else {
+        enviarPedidoBtn.style.display = 'none';
+      }
+    }
+
+    function enviarPedido() {
+      const resumenGenerado = resumenDiv.innerText;
+      // Validar si el resumen está vacío o solo contiene el título y total 0
+      if (!resumenGenerado || resumenGenerado.trim() === '📋 Pedido Escor.line\n\n💰 Total estimado: $0') {
+        alert("¡Oops! Parece que tu pedido está vacío. Por favor, selecciona productos o llena los campos antes de enviar.");
+        return;
+      }
+
+      const asunto = encodeURIComponent("Pedido desde Escor.line");
+      const cuerpo = encodeURIComponent(resumenGenerado);
+
+      // Mostrar mensaje de envío antes de redirigir
+      mensajeEnvio.style.display = 'block';
+
+      // Retrasar la redirección ligeramente para que el usuario vea el mensaje
+      setTimeout(() => {
+        window.location.href = `mailto:escoroline@gmail.com?subject=${asunto}&body=${cuerpo}`;
+        // Ocultar el mensaje después de la redirección (aunque la página se recargará)
+        mensajeEnvio.style.display = 'none';
+      }, 500); // Pequeño retraso de 0.5 segundos
+    }
+
+    // --- Lógica del Modal de Trabajo ---
+
+    abrirModalTrabajoBtn.addEventListener('click', () => {
+      modalTrabajo.style.display = 'flex'; // Mostrar como flex para centrado
+      document.body.style.overflow = 'hidden'; // Evitar scroll de fondo
+      // Ocultar detalles al abrir el modal
+      hideAllWorkOptions();
+      workDetails.style.display = 'none';
+    });
+
+    closeButtonTrabajo.addEventListener('click', () => {
+      modalTrabajo.style.display = 'none';
+      document.body.style.overflow = ''; // Restaurar scroll
+    });
+
+    // Delegación de eventos para cerrar modales al hacer clic fuera
+    window.addEventListener('click', (event) => {
+      if (event.target == modalTrabajo) {
+        modalTrabajo.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      if (event.target == modalPoliticas) {
+        modalPoliticas.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Función para ocultar todas las opciones de detalle de trabajo
+    function hideAllWorkOptions() {
+      wordOptions.style.display = 'none';
+      powerPointOptions.style.display = 'none';
+      artesanalOptions.style.display = 'none';
+    }
+
+    btnWord.addEventListener('click', () => {
+      hideAllWorkOptions();
+      wordOptions.style.display = 'block';
+      workDetails.style.display = 'block';
+      trabajoActual.tipo = "Word";
+      trabajoActual.detalles = ""; // Reset detalles
+      trabajoActual.precio = 0; // Reset precio
+      calcularPrecioTrabajo(); // Calcular precio inicial de Word
+    });
+
+    btnPowerPoint.addEventListener('click', () => {
+      hideAllWorkOptions();
+      powerPointOptions.style.display = 'block';
+      workDetails.style.display = 'block';
+      trabajoActual.tipo = "PowerPoint";
+      trabajoActual.detalles = ""; // Reset detalles
+      trabajoActual.precio = 0; // Reset precio
+      calcularPrecioTrabajo(); // Calcular precio inicial de PowerPoint
+    });
+
+    btnArtesanal.addEventListener('click', () => {
+      hideAllWorkOptions();
+      artesanalOptions.style.display = 'block';
+      workDetails.style.display = 'block';
+      trabajoActual.tipo = "Artesanal";
+      trabajoActual.detalles = ""; // Reset detalles
+      trabajoActual.precio = 0; // Precio manual, no se calcula aquí
+    });
+
+    // Función para calcular el precio del trabajo (Word/PPT/Artesanal)
+    function calcularPrecioTrabajo() {
+        let precioCalculado = 0;
+        let detallesCalculados = "";
+
+        if (trabajoActual.tipo === "Word") {
+            const paginas = parseInt(document.getElementById("wordPages").value) || 1;
+            precioCalculado = PRECIO_WORD_BASE;
+            if (paginas > PRECIO_WORD_BASE_PAGES) {
+                precioCalculado += (paginas - PRECIO_WORD_BASE_PAGES) * PRECIO_WORD_EXTRA_PAGINA;
+            }
+            detallesCalculados = `${paginas} páginas`;
+        } else if (trabajoActual.tipo === "PowerPoint") {
+            const diapositivas = parseInt(document.getElementById("powerPointSlides").value) || 1;
+            precioCalculado = PRECIO_PPT_BASE;
+            if (diapositivas > PRECIO_PPT_BASE_SLIDES) {
+                precioCalculado += (diapositivas - PRECIO_PPT_BASE_SLIDES) * PRECIO_PPT_EXTRA_DIAPOSITIVA;
+            }
+            detallesCalculados = `${diapositivas} diapositivas`;
+        } else if (trabajoActual.tipo === "Artesanal") {
+            precioCalculado = parseInt(document.getElementById("artesanalPrice").value) || 0;
+            detallesCalculados = document.getElementById("artesanalDetails").value.trim();
+        }
+        trabajoActual.precio = precioCalculado;
+        trabajoActual.detalles = detallesCalculados;
+        calcularTotalDinamico(); // Recalcular el total cada vez que cambian los detalles del trabajo
+    }
+
+    // Escuchadores de eventos para los inputs del trabajo para calcular el precio dinámicamente
+    document.getElementById("wordPages").addEventListener('input', calcularPrecioTrabajo);
+    document.getElementById("powerPointSlides").addEventListener('input', calcularPrecioTrabajo);
+    document.getElementById("artesanalDetails").addEventListener('input', calcularPrecioTrabajo); // Update details for summary
+    document.getElementById("artesanalPrice").addEventListener('input', calcularPrecioTrabajo); // Update price for summary
+
+
+    confirmarTrabajoBtn.addEventListener('click', () => {
+        if (trabajoActual.tipo === "Artesanal") {
+            trabajoActual.detalles = document.getElementById("artesanalDetails").value.trim();
+            trabajoActual.precio = parseInt(document.getElementById("artesanalPrice").value) || 0;
+            if (!trabajoActual.detalles) {
+                alert("Por favor, describe tu trabajo artesanal.");
+                return;
+            }
+        } else {
+            calcularPrecioTrabajo(); // Asegurarse de que el precio y detalles estén actualizados
+        }
+
+      trabajoSeleccionadoInput.value = `${trabajoActual.tipo}` + (trabajoActual.detalles ? ` (${trabajoActual.detalles})` : "");
+      if (trabajoActual.precio > 0 && trabajoActual.tipo !== "Artesanal") {
+        trabajoSeleccionadoInput.value += ` - $${trabajoActual.precio}`;
+      } else if (trabajoActual.tipo === "Artesanal") {
+        if (trabajoActual.precio > 0) {
+            trabajoSeleccionadoInput.value += ` - Ofrecido: $${trabajoActual.precio}`;
+        } else {
+            trabajoSeleccionadoInput.value += ` (Precio a acordar)`;
+        }
+      }
+
+      modalTrabajo.style.display = 'none';
+      document.body.style.overflow = '';
+      calcularTotalDinamico(); // Recalcular total cuando se confirma el trabajo
+    });
+
+    // --- Lógica del Modal de Políticas ---
+    abrirModalPoliticasBtn.addEventListener('click', () => {
+        modalPoliticas.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        modalPoliticasLoader.classList.remove('hidden'); // Mostrar la animación
+
+        setTimeout(() => {
+            modalPoliticasLoader.classList.add('hidden'); // Ocultar animación después de un tiempo
+        }, 1500); // Duración de la animación de apertura de flor
+    });
+
+    closePoliticasModalBtn.addEventListener('click', () => {
+        modalPoliticas.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+
+
+    // Escuchadores de eventos para los botones principales
+    verResumenBtn.addEventListener('click', generarResumen);
+    enviarPedidoBtn.addEventListener('click', enviarPedido);
+
+    // Lógica para el preloader principal
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      setTimeout(() => {
+        preloader.classList.add('hidden');
+        document.body.style.overflow = ''; // Permite el scroll una vez que el preloader se oculta
+      }, 3000); // Reducido a 3 segundos
+      document.body.style.overflow = 'hidden'; // Evita el scroll mientras el preloader está activo
+      calcularTotalDinamico(); // Calcular el total inicial al cargar la página
+    });
+
+    // Calcular el total dinámico al cargar la página por primera vez
+    calcularTotalDinamico();
+
+    // Añadir escuchadores de eventos para los campos de texto también para actualizar el resumen
+    document.getElementById("nombre").addEventListener('input', generarResumen);
+    document.getElementById("ayuda").addEventListener('input', generarResumen);
+
+  </script>
+</body>
+</html>
